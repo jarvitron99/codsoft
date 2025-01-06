@@ -1,45 +1,49 @@
-# Simple Calculator
+import tkinter as tk
+from tkinter import messagebox
 
-def calculator():
-    print("Welcome to the Simple Calculator!")
-    print("Select an operation:")
-    print("1. Addition (+)")
-    print("2. Subtraction (-)")
-    print("3. Multiplication (*)")
-    print("4. Division (/)")
+def clear_display():
+    display_var.set("")
 
+def button_click(value):
+    current_text = display_var.get()
+    display_var.set(current_text + str(value))
+
+def calculate():
     try:
-        # Take operation input
-        choice = int(input("Enter the number corresponding to the operation (1/2/3/4): "))
+        # Extract numbers and operation from the display
+        expression = display_var.get()
+        result = eval(expression)
+        display_var.set(result)
+    except Exception as e:
+        messagebox.showerror("Error", "Invalid Input")
+        display_var.set("")
 
-        # Check for valid operation
-        if choice not in [1, 2, 3, 4]:
-            print("Invalid choice. Please select a valid operation.")
-            return
+# Create the main window
+root = tk.Tk()
+root.title("Simple Calculator")
 
-        # Take two numbers as input
-        num1 = float(input("Enter the first number: "))
-        num2 = float(input("Enter the second number: "))
+# Display for showing input and result
+display_var = tk.StringVar()
+entry = tk.Entry(root, textvariable=display_var, font=("Arial", 20), justify='right')
+entry.grid(row=0, column=0, columnspan=4, ipadx=8, ipady=8, padx=10, pady=10)
 
-        # Perform the selected operation
-        if choice == 1:
-            result = num1 + num2
-            print(f"The result of {num1} + {num2} is: {result}")
-        elif choice == 2:
-            result = num1 - num2
-            print(f"The result of {num1} - {num2} is: {result}")
-        elif choice == 3:
-            result = num1 * num2
-            print(f"The result of {num1} * {num2} is: {result}")
-        elif choice == 4:
-            # Handle division by zero
-            if num2 == 0:
-                print("Error: Division by zero is not allowed.")
-            else:
-                result = num1 / num2
-                print(f"The result of {num1} / {num2} is: {result}")
-    except ValueError:
-        print("Invalid input. Please enter numerical values.")
+# Button layout
+buttons = [
+    ('7', 1, 0), ('8', 1, 1), ('9', 1, 2), ('/', 1, 3),
+    ('4', 2, 0), ('5', 2, 1), ('6', 2, 2), ('*', 2, 3),
+    ('1', 3, 0), ('2', 3, 1), ('3', 3, 2), ('-', 3, 3),
+    ('C', 4, 0), ('0', 4, 1), ('=', 4, 2), ('+', 4, 3),
+]
 
-# Run the calculator
-calculator()
+# Create buttons dynamically
+for (text, row, col) in buttons:
+    if text == '=':
+        button = tk.Button(root, text=text, font=("Arial", 18), command=calculate)
+    elif text == 'C':
+        button = tk.Button(root, text=text, font=("Arial", 18), command=clear_display)
+    else:
+        button = tk.Button(root, text=text, font=("Arial", 18), command=lambda t=text: button_click(t))
+    button.grid(row=row, column=col, ipadx=10, ipady=10, padx=5, pady=5)
+
+# Run the application
+root.mainloop()
